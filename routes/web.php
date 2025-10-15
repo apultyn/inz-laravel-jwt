@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\ReviewController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::apiResource('books', BookController::class); //->only(['index', 'show']);
+Route::apiResource('reviews', ReviewController::class); //->only(['index', 'show']);
