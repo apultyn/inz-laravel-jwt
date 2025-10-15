@@ -8,6 +8,7 @@ use App\Services\BookService;
 use App\Http\Requests\SaveBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class BookController extends Controller
 {
@@ -17,16 +18,17 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        $books = $this->bookService->getAllBooks();
+        $searchString = $request->query('searchstring');
+        $books = $this->bookService->getBooks($searchString);
         return response()->json($books);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SaveBookRequest $req)
+    public function store(SaveBookRequest $req): JsonResponse
     {
         $book = $this->bookService->createBook($req->validated());
         return response()->json($book, 201);
@@ -35,7 +37,7 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show(Book $book): Book
     {
         return $book;
     }

@@ -4,13 +4,15 @@ namespace App\Services;
 
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class BookService
 {
-    public function getAllBooks(): Collection
+    public function getBooks(string $searchString): Collection
     {
-        return Book::All();
+        return Book::where(function ($query) use ($searchString) {
+            $query->where('title', 'like', '%' . $searchString . '%')
+                ->orWhere('author', 'like', '%' . $searchString . '%');
+        })->get();
     }
 
     public function createBook(array $data): Book
@@ -24,7 +26,7 @@ class BookService
         return $book;
     }
 
-    public function deleteBook(Book $book) : Bool
+    public function deleteBook(Book $book): bool
     {
         $book->delete();
         return true;
