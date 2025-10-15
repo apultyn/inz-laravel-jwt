@@ -5,11 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
 
-use App\Enums\UserRole;
-
-class IsAdmin
+class ForceJsonResponse
 {
     /**
      * Handle an incoming request.
@@ -18,12 +15,11 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (
-            Auth::check() && Auth::user()->role === UserRole::ADMIN) {
-            // Jeśli tak, przepuść żądanie dalej
-            return $next($request);
+        if ($request->is('api/*')) {
+            // Ustawiamy nagłówek, informując aplikację, że oczekujemy odpowiedzi JSON
+            $request->headers->set('Accept', 'application/json');
         }
 
-        return response()->json(['message' => 'Forbidden: Requires admin privileges.'], 403);
+        return $next($request);
     }
 }

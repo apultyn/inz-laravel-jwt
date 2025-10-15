@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Enums\UserRole;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
@@ -12,6 +13,7 @@ class AuthService
         return User::create([
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']), // Szyfrowanie hasła
+            'role' => UserRole::USER
         ]);
     }
     public function loginUser(array $credentials): ?string
