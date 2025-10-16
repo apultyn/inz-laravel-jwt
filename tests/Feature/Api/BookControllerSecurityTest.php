@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Book;
 use App\Models\User;
+use App\Models\Review;
 
 
 class BookControllerSecurityTest extends TestCase
@@ -29,15 +30,15 @@ class BookControllerSecurityTest extends TestCase
             'author' => 'Ktoś inny'
         ]);
 
-        $this->getJson('/api/books')
+        $this->getJson('/api/books/')
             ->assertStatus(200)
             ->assertJsonCount(3, );
 
-        $this->getJson('/api/books?searchString=tyt')
+        $this->getJson('/api/books/?searchString=tyt')
             ->assertStatus(200)
             ->assertJsonCount(2, );
 
-        $this->getJson('/api/books?searchString=błąd')
+        $this->getJson('/api/books/?searchString=błąd')
             ->assertStatus(200)
             ->assertJsonCount(0, );
         ;
@@ -46,10 +47,30 @@ class BookControllerSecurityTest extends TestCase
     public function test_get_book()
     {
         $book = Book::factory()->create();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        Review::factory()->create(['book_id' => $book->id, 'user_id' => $user1->id]);
+        Review::factory()->create(['book_id' => $book->id, 'user_id' => $user2->id]);
 
         $this->getJson("/api/books/{$book->id}")
             ->assertStatus(200)
-            ->assertJsonFragment(['id' => $book->id, 'title' => $book->title, 'author' => $book->author]);
+            ->assertJsonCount(2, 'data.reviews')
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'title',
+                    'author',
+                    'reviews' => [
+                        '*' => [
+                            'id',
+                            'stars',
+                            'comment',
+                            'user_email'
+                        ]
+                    ]
+                ]
+            ]);
     }
 
     public function test_create_book_unauth(): void

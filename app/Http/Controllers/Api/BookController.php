@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Services\BookService;
+use App\Http\Resources\BookResource;
 use App\Http\Requests\SaveBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use Illuminate\Http\Request;
@@ -15,45 +16,32 @@ class BookController extends Controller
     public function __construct(private BookService $bookService)
     {
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request): JsonResponse
     {
         $searchString = $request->query('searchString') ?? "";
         $books = $this->bookService->getBooks($searchString);
-        return response()->json($books, 200);
+        return response()->json(BookResource::collection($books), 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(SaveBookRequest $req): JsonResponse
     {
         $book = $this->bookService->createBook($req->validated());
-        return response()->json($book, 201);
+        return response()->json(new BookResource($book), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Book $book): Book
+    public function show(Book $book): BookResource
     {
-        return $book;
+        $book->load('reviews.user');
+        return new BookResource($book);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateBookRequest $req, Book $book)
     {
         $updatedBook = $this->bookService->updateBook($book, $req->validated());
-        return response()->json($updatedBook);
+        return response()->json(new BookResource($updatedBook));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Book $book)
     {
         $this->bookService->deleteBook($book);
