@@ -21,9 +21,9 @@ Route::middleware('auth:api')->group(function () {
 
 Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::post('/books', [BookController::class, 'store']);
-    Route::put('/books/{book}', [BookController::class, 'update']);
+    Route::patch('/books/{book}', [BookController::class, 'update']);
     Route::delete('/books/{book}', [BookController::class, 'destroy']);
 
-    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    Route::patch('/reviews/{review}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
 });

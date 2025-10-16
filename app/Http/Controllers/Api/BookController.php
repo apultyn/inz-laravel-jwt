@@ -20,9 +20,9 @@ class BookController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $searchString = $request->query('searchstring');
+        $searchString = $request->query('searchString') ?? "";
         $books = $this->bookService->getBooks($searchString);
-        return response()->json($books);
+        return response()->json($books, 200);
     }
 
     /**
@@ -57,5 +57,6 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         $this->bookService->deleteBook($book);
+        return response([], 204);
     }
 }
