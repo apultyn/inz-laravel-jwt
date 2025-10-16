@@ -22,7 +22,9 @@ class SaveReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'book_id' => ['required', 'integer', 'exists:books,id'],
+            'stars' => ['required', 'integer', 'between:1,5'],
+            'comment' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

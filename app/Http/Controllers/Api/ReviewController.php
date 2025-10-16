@@ -24,7 +24,13 @@ class ReviewController extends Controller
 
     public function store(SaveReviewRequest $req): JsonResponse
     {
-        $review = $this->reviewService->createReview($req->all());
+        $validatedData = $req->validated();
+
+        $data = array_merge($validatedData, [
+            'user_id' => auth()->id()
+        ]);
+
+        $review = $this->reviewService->createReview($data);
         return response()->json(new ReviewResource($review), 201);
     }
 
