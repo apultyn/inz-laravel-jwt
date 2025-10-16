@@ -23,7 +23,8 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'stars' => ['nullable', 'integer', 'between:1,5'],
+            'comment' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

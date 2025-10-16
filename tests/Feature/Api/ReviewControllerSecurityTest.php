@@ -62,4 +62,86 @@ class ReviewControllerSecurityTest extends TestCase
 
         $this->assertDatabaseHas('reviews', [...$reviewData, 'user_id' => $admin->id]);
     }
+
+    public function test_update_review_unauth(): void
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+        $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
+
+        $reviewData = [
+            'comment' => 'fine'
+        ];
+
+        $this->patchJson("api/reviews/{$review->id}", $reviewData)
+            ->assertStatus(401);
+    }
+
+    public function test_update_review_user(): void
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+        $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
+
+        $reviewData = [
+            'comment' => 'fine'
+        ];
+
+        $this->actingAs($user, 'api')
+            ->patchJson("api/reviews/{$review->id}", $reviewData)
+            ->assertStatus(403);
+    }
+
+    public function test_update_review_admin(): void
+    {
+        $book = Book::factory()->create();
+        $admin = User::factory()->admin()->create();
+        $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $admin->id]);
+
+        $reviewData = [
+            'comment' => 'fine'
+        ];
+
+        $this->actingAs($admin, 'api')
+            ->patchJson("api/reviews/{$review->id}", $reviewData)
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('reviews', array_merge(
+            ['id' => $review->id, 'book_id' => $book->id, 'user_id' => $admin->id, 'stars' => $review->stars, 'comment' => 'fine'],
+        ));
+    }
+
+    public function test_delete_review_unauth(): void
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+        $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
+
+        $this->deleteJson("/api/reviews/{$review->id}")
+            ->assertStatus(401);
+    }
+
+    public function test_delete_review_user(): void
+    {
+        $book = Book::factory()->create();
+        $user = User::factory()->create();
+        $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
+
+        $this->actingAs($user, 'api')
+            ->deleteJson("/api/reviews/{$review->id}")
+            ->assertStatus(403);
+    }
+
+    public function test_delete_review_admin(): void
+    {
+        $book = Book::factory()->create();
+        $admin = User::factory()->admin()->create();
+        $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $admin->id]);
+
+        $this->actingAs($admin, 'api')
+            ->deleteJson("/api/reviews/{$review->id}")
+            ->assertStatus(204);
+
+        $this->assertDatabaseMissing('reviews', [$review]);
+    }
 }
