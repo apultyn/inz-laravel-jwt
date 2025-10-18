@@ -2,6 +2,6 @@
 
 php artisan migrate
 
-php-fpm
+php-fpm &
 
 exec nginx -g 'daemon off;'

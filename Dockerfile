@@ -38,8 +38,7 @@ COPY --from=vendor /app/vendor ./vendor
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-RUN php artisan config:cache \
-    && php artisan route:cache
+RUN php artisan route:cache
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
