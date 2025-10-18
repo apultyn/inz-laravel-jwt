@@ -55,19 +55,18 @@ class BookControllerSecurityTest extends TestCase
 
         $this->getJson("/api/books/{$book->id}")
             ->assertStatus(200)
-            ->assertJsonCount(2, 'data.reviews')
+            ->assertJsonCount(2, 'reviews')
             ->assertJsonStructure([
-                'data' => [
-                    'id',
-                    'title',
-                    'author',
-                    'reviews' => [
-                        '*' => [
-                            'id',
-                            'stars',
-                            'comment',
-                            'user_email'
-                        ]
+                'id',
+                'title',
+                'author',
+                'reviews' => [
+                    '*' => [
+                        'id',
+                        'stars',
+                        'comment',
+                        'user_email',
+                        'book_id'
                     ]
                 ]
             ]);

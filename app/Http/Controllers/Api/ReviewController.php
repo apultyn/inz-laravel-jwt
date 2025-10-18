@@ -34,9 +34,10 @@ class ReviewController extends Controller
         return response()->json(new ReviewResource($review), 201);
     }
 
-    public function show(Review $review): ReviewResource
+    public function show(Review $review): JsonResponse
     {
-        return new ReviewResource($review);
+        $review->load(['book', 'user']);
+        return response()->json(new ReviewResource($review));
     }
 
     public function update(UpdateReviewRequest $req, Review $review)

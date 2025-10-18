@@ -30,10 +30,10 @@ class BookController extends Controller
         return response()->json(new BookResource($book), 201);
     }
 
-    public function show(Book $book): BookResource
+    public function show(Book $book): JsonResponse
     {
-        $book->load('reviews.user');
-        return new BookResource($book);
+        $book->load(['reviews.user', 'reviews.book']);
+        return response()->json(new BookResource($book));
     }
 
     public function update(UpdateBookRequest $req, Book $book)
