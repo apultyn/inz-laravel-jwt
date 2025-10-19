@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\UserRole;
+use Illuminate\Validation\Rule;
 
 class SaveBookRequest extends FormRequest
 {
@@ -23,8 +24,20 @@ class SaveBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('books')->where('author', $this->author)
+            ],
             'author' => 'required|string|max:255',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'title.unique' => 'Combination of title and author must be unique',
         ];
     }
 }
