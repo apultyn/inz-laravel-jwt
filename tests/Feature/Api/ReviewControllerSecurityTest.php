@@ -4,10 +4,12 @@ namespace Tests\Feature\Api;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
 use App\Models\Book;
 use App\Models\User;
 use App\Models\Review;
 
+use Database\Seeders\RoleSeeder;
 
 class ReviewControllerSecurityTest extends TestCase
 {
@@ -15,7 +17,13 @@ class ReviewControllerSecurityTest extends TestCase
      * A basic feature test example.
      */
     use RefreshDatabase;
+    protected function setUp(): void
+    {
+        parent::setUp(); // Konieczne wywołanie metody rodzica!
 
+        // Uruchamiamy seeder ról, aby były dostępne dla UserFactory
+        $this->seed(RoleSeeder::class);
+    }
     public function test_create_review_unauth(): void
     {
         $book = Book::factory()->create();

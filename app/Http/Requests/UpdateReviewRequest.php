@@ -12,7 +12,7 @@ class UpdateReviewRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->role === UserRole::ADMIN;
+        return $this->user()->HasRole("BOOK_ADMIN");
     }
 
     /**

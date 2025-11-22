@@ -10,11 +10,14 @@ class AuthService
 {
     public function registerUser(array $validatedData): User
     {
-        return User::create([
+        $user =  User::create([
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']), // Szyfrowanie hasła
-            'role' => UserRole::USER
+            'password' => Hash::make($validatedData['password']),
         ]);
+
+        $user->assignRole("BOOK_USER");
+
+        return $user;
     }
     public function loginUser(array $credentials): ?string
     {

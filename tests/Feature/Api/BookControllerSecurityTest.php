@@ -4,9 +4,12 @@ namespace Tests\Feature\Api;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
 use App\Models\Book;
 use App\Models\User;
 use App\Models\Review;
+
+use Database\Seeders\RoleSeeder;
 
 
 class BookControllerSecurityTest extends TestCase
@@ -15,6 +18,13 @@ class BookControllerSecurityTest extends TestCase
      * A basic feature test example.
      */
     use RefreshDatabase;
+    protected function setUp(): void
+    {
+        parent::setUp(); // Konieczne wywołanie metody rodzica!
+
+        // Uruchamiamy seeder ról, aby były dostępne dla UserFactory
+        $this->seed(RoleSeeder::class);
+    }
     public function test_get_books(): void
     {
         Book::factory()->create([
