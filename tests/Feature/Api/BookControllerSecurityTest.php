@@ -20,9 +20,7 @@ class BookControllerSecurityTest extends TestCase
     use RefreshDatabase;
     protected function setUp(): void
     {
-        parent::setUp(); // Konieczne wywołanie metody rodzica!
-
-        // Uruchamiamy seeder ról, aby były dostępne dla UserFactory
+        parent::setUp();
         $this->seed(RoleSeeder::class);
     }
     public function test_get_books(): void
