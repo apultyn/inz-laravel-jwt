@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
@@ -20,7 +21,7 @@ class AuthService
     }
     public function loginUser(array $credentials): ?string
     {
-        $token = auth('api')->attempt($credentials);
+        $token = Auth::guard()->attempt($credentials);
         if (!$token) {
             return null;
         }
@@ -33,8 +34,8 @@ class AuthService
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
-            'user' => auth('api')->user(),
+            'expires_in' => Auth::factory()->getTTL() * 60,
+            'user' => Auth::guard()->user(),
         ]);
     }
 }
