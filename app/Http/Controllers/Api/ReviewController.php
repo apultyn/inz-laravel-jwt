@@ -27,7 +27,7 @@ class ReviewController extends Controller
         $validatedData = $req->validated();
 
         $data = array_merge($validatedData, [
-            'user_id' => auth()->id()
+            'user_id' => auth('api')->id()
         ]);
 
         $review = $this->reviewService->createReview($data);

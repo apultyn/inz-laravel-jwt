@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        Role::create(['name' => 'BOOK_USER']);
-        Role::create(['name' => 'BOOK_ADMIN']);
+        Role::create(['name' => 'BOOK_USER', 'guard_name' => 'api']);
+        Role::create(['name' => 'BOOK_ADMIN', 'guard_name' => 'api']);
     }
 }

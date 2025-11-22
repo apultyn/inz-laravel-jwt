@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
 
 class IsAdmin
 {
@@ -17,7 +16,7 @@ class IsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (
-            Auth::check() && Auth::user()->hasRole("BOOK_ADMIN")
+            auth('api')->check() && auth('api')->user()->hasRole("BOOK_ADMIN")
         ) {
             return $next($request);
         }

@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-use App\Enums\UserRole;
-
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -48,7 +46,6 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => UserRole::class,
         ];
     }
 
@@ -66,7 +63,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'email' => $this->email,
-            'role' => $this->role,
+            'roles' => $this->getRoleNames(),
         ];
     }
 
