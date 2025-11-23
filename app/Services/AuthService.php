@@ -35,7 +35,6 @@ class AuthService
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::factory()->getTTL() * 60,
-            'user' => Auth::guard()->user(),
         ]);
     }
 }
