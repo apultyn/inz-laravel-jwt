@@ -117,7 +117,6 @@ class ReviewControllerSecurityTest extends TestCase
         $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $admin->id]);
 
         $reviewData = [
-            'comment' => 'fine',
             'stars' => 3
         ];
 
@@ -126,7 +125,7 @@ class ReviewControllerSecurityTest extends TestCase
             ->assertStatus(200);
 
         $this->assertDatabaseHas('reviews', array_merge(
-            ['id' => $review->id, 'book_id' => $book->id, 'user_id' => $admin->id, 'stars' => 3, 'comment' => 'fine'],
+            ['id' => $review->id, 'book_id' => $book->id, 'user_id' => $admin->id, 'stars' => 3, 'comment' => $review->comment],
         ));
     }
 
