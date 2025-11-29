@@ -61,7 +61,7 @@ class BookControllerSecurityTest extends TestCase
         Review::factory()->create(['book_id' => $book->id, 'user_id' => $user1->id]);
         Review::factory()->create(['book_id' => $book->id, 'user_id' => $user2->id]);
 
-        $this->getJson("/api/books/{$book->id}")
+        $this->getJson("/api/books/{$book->id}/")
             ->assertStatus(200)
             ->assertJsonCount(2, 'reviews')
             ->assertJsonStructure([
@@ -83,7 +83,7 @@ class BookControllerSecurityTest extends TestCase
     public function test_create_book_unauth(): void
     {
         $bookData = ['title' => 'Nowa Książka', 'author' => 'Autor'];
-        $this->postJson('/api/books', $bookData)
+        $this->postJson('/api/books/', $bookData)
             ->assertStatus(401);
     }
 
@@ -93,7 +93,7 @@ class BookControllerSecurityTest extends TestCase
         $bookData = ['title' => 'Nowa Książka', 'author' => 'Autor'];
 
         $this->actingAs($user, 'api')
-            ->postJson('/api/books', $bookData)
+            ->postJson('/api/books/', $bookData)
             ->assertStatus(403);
     }
 
@@ -103,7 +103,7 @@ class BookControllerSecurityTest extends TestCase
         $bookData = ['title' => 'Nowa Książka od Admina', 'author' => 'Admin'];
 
         $this->actingAs($admin, 'api')
-            ->postJson('/api/books', $bookData)
+            ->postJson('/api/books/', $bookData)
             ->assertStatus(201);
     }
 
@@ -113,7 +113,7 @@ class BookControllerSecurityTest extends TestCase
 
         $updateData = ['title' => 'Nowy tytuł'];
 
-        $this->patchJson("/api/books/{$book->id}", $updateData)
+        $this->patchJson("/api/books/{$book->id}/", $updateData)
             ->assertStatus(401);
     }
 
@@ -125,7 +125,7 @@ class BookControllerSecurityTest extends TestCase
         $updateData = ['title' => 'Nowy tytuł'];
 
         $this->actingAs($user, 'api')
-            ->patchJson("/api/books/{$book->id}", $updateData)
+            ->patchJson("/api/books/{$book->id}/", $updateData)
             ->assertStatus(403);
     }
 
@@ -137,7 +137,7 @@ class BookControllerSecurityTest extends TestCase
         $updateData = ['title' => 'Nowy tytuł'];
 
         $this->actingAs($admin, 'api')
-            ->patchJson("/api/books/{$book->id}", $updateData)
+            ->patchJson("/api/books/{$book->id}/", $updateData)
             ->assertStatus(200);
 
         $this->assertDatabaseHas('books', [
@@ -151,7 +151,7 @@ class BookControllerSecurityTest extends TestCase
     {
         $book = Book::factory()->create();
 
-        $this->delete("/api/books/{$book->id}")
+        $this->delete("/api/books/{$book->id}/")
             ->assertStatus(401);
     }
 
@@ -161,7 +161,7 @@ class BookControllerSecurityTest extends TestCase
         $book = Book::factory()->create();
 
         $this->actingAs($user, 'api')
-            ->delete("/api/books/{$book->id}")
+            ->delete("/api/books/{$book->id}/")
             ->assertStatus(403);
     }
 
@@ -172,7 +172,7 @@ class BookControllerSecurityTest extends TestCase
 
 
         $this->actingAs($admin, 'api')
-            ->delete("/api/books/{$book->id}")
+            ->delete("/api/books/{$book->id}/")
             ->assertStatus(204);
 
         $this->assertDatabaseMissing('books', [

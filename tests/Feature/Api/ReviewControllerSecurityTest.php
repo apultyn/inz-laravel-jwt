@@ -27,11 +27,11 @@ class ReviewControllerSecurityTest extends TestCase
         $book = Book::factory()->create();
 
         $reviewData = [
-            'book_id' => $book->id,
+            'bookId' => $book->id,
             'stars' => 5,
             'comment' => 'fine'
         ];
-        $this->postJson('/api/reviews', $reviewData)
+        $this->postJson('/api/reviews/', $reviewData)
             ->assertStatus(401);
     }
 
@@ -41,15 +41,21 @@ class ReviewControllerSecurityTest extends TestCase
         $user = User::factory()->create();
 
         $reviewData = [
-            'book_id' => $book->id,
+            'bookId' => $book->id,
             'stars' => 5,
             'comment' => 'fine'
         ];
         $this->actingAs($user, 'api')
-            ->postJson('/api/reviews', $reviewData)
+            ->postJson('/api/reviews/', $reviewData)
             ->assertStatus(201);
 
-        $this->assertDatabaseHas('reviews', [...$reviewData, 'user_id' => $user->id]);
+        $this->assertDatabaseHas('reviews', [
+
+            'book_id' => $book->id,
+            'stars' => 5,
+            'comment' => 'fine',
+            'user_id' => $user->id
+        ]);
     }
 
     public function test_create_review_admin(): void
@@ -58,15 +64,21 @@ class ReviewControllerSecurityTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         $reviewData = [
-            'book_id' => $book->id,
+            'bookId' => $book->id,
             'stars' => 5,
             'comment' => 'fine'
         ];
         $this->actingAs($admin, 'api')
-            ->postJson('/api/reviews', $reviewData)
+            ->postJson('/api/reviews/', $reviewData)
             ->assertStatus(201);
 
-        $this->assertDatabaseHas('reviews', [...$reviewData, 'user_id' => $admin->id]);
+        $this->assertDatabaseHas('reviews', [
+
+            'book_id' => $book->id,
+            'stars' => 5,
+            'comment' => 'fine',
+            'user_id' => $admin->id
+        ]);
     }
 
     public function test_update_review_unauth(): void
@@ -79,7 +91,7 @@ class ReviewControllerSecurityTest extends TestCase
             'comment' => 'fine'
         ];
 
-        $this->patchJson("api/reviews/{$review->id}", $reviewData)
+        $this->patchJson("api/reviews/{$review->id}/", $reviewData)
             ->assertStatus(401);
     }
 
@@ -94,7 +106,7 @@ class ReviewControllerSecurityTest extends TestCase
         ];
 
         $this->actingAs($user, 'api')
-            ->patchJson("api/reviews/{$review->id}", $reviewData)
+            ->patchJson("api/reviews/{$review->id}/", $reviewData)
             ->assertStatus(403);
     }
 
@@ -110,7 +122,7 @@ class ReviewControllerSecurityTest extends TestCase
         ];
 
         $this->actingAs($admin, 'api')
-            ->patchJson("api/reviews/{$review->id}", $reviewData)
+            ->patchJson("api/reviews/{$review->id}/", $reviewData)
             ->assertStatus(200);
 
         $this->assertDatabaseHas('reviews', array_merge(
@@ -124,7 +136,7 @@ class ReviewControllerSecurityTest extends TestCase
         $user = User::factory()->create();
         $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
 
-        $this->deleteJson("/api/reviews/{$review->id}")
+        $this->deleteJson("/api/reviews/{$review->id}/")
             ->assertStatus(401);
     }
 
@@ -135,7 +147,7 @@ class ReviewControllerSecurityTest extends TestCase
         $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
 
         $this->actingAs($user, 'api')
-            ->deleteJson("/api/reviews/{$review->id}")
+            ->deleteJson("/api/reviews/{$review->id}/")
             ->assertStatus(403);
     }
 
@@ -146,7 +158,7 @@ class ReviewControllerSecurityTest extends TestCase
         $review = Review::factory()->create(['book_id' => $book->id, 'user_id' => $admin->id]);
 
         $this->actingAs($admin, 'api')
-            ->deleteJson("/api/reviews/{$review->id}")
+            ->deleteJson("/api/reviews/{$review->id}/")
             ->assertStatus(204);
 
         $this->assertDatabaseMissing('reviews', [$review]);
